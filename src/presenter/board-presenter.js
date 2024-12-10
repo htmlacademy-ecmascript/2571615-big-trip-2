@@ -1,32 +1,36 @@
 import SortView from '../view/sort-view';
-import EventsListView from '../view/event-list-view';
+import PointsListView from '../view/points-list-view';
 import FormEditView from '../view/form-edit-view';
 import PointView from '../view/point-view';
-import FilterView from '../view/filter-view';
+import FiltersView from '../view/filters-view';
 import {render} from '../render';
-
 
 export default class BoardPresenter {
 
   sortComponent = new SortView();
-  eventsListComponent = new EventsListView();
-  filterComponent = new FilterView();
+  pointsListComponent = new PointsListView();
+  filterComponent = new FiltersView();
 
+  container = null;
   filterContainer = document.querySelector('.trip-controls__filters');
 
-  constructor(container) {
+  model = {};
+
+  constructor(container, model) {
     this.container = container;
+    this.model = model;
   }
 
   init () {
     render(this.filterComponent, this.filterContainer);
     render(this.sortComponent, this.container);
-    render(this.eventsListComponent, this.container);
-    render(new FormEditView(), this.eventsListComponent.getElement());
+    render(this.pointsListComponent, this.container);
+    render(new FormEditView(this.model.getResolvedPointsArray()[0]), this.pointsListComponent.getElement());
 
-    for (let i = 0; i < 3; ++i) {
-      render(new PointView(), this.eventsListComponent.getElement());
-    }
+    this.model.getResolvedPointsArray().forEach((point) => {
+      render(new PointView(point), this.pointsListComponent.getElement());
+    });
+
   }
 
 }
