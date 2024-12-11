@@ -1,7 +1,7 @@
 # Проект «Большое путешествие»
 
 * Студент: [Игорь Кондратьев](https://up.htmlacademy.ru/ecmascript-individual/2/user/2571615).
-* Наставник: `Сергей Андреев`
+* Наставник: [Сергей Андреев](https://htmlacademy.ru/profile/id812127)
 
 ---
 
