@@ -1,4 +1,4 @@
-export const destinationsMockArray = [
+export const destinationsMock = [
   {
     'id': 'f02f4785-c2b5-4e0b-9c79-adc3c3c4ed1e',
     'description': 'Tokio - a true asian pearl',

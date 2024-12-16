@@ -1,12 +1,13 @@
 import {createElement} from '../render.js';
+import { pointsMock } from '../mocks/points-mock.js';
+
+const pointsTypes = pointsMock.map((point)=>point.type);
 
 function createFormEditTemplate(point) {
 
-  const checkedOffersIds = new Set(point.offers.map((offer) => offer.id));
-
-  const offersMarkup = point.allOffersArray.map((offer) => `
+  const offersMarkup = point.pointOffers.map((offer) => `
     <div class="event__offer-selector">
-      <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.title.toLowerCase().replace(/\s+/g, '-')}" ${checkedOffersIds.has(offer.id) ? 'checked' : ''}>
+      <input class="event__offer-checkbox visually-hidden" id="event-offer-${offer.id}" type="checkbox" name="event-offer-${offer.title.toLowerCase().replace(/\s+/g, '-')}" ${offer.isChecked ? 'checked' : ''}>
       <label class="event__offer-label" for="event-offer-${offer.id}">
         <span class="event__offer-title">${offer.title}</span>
         &plus;&euro;&nbsp;
@@ -27,7 +28,7 @@ function createFormEditTemplate(point) {
                   <div class="event__type-list">
                     <fieldset class="event__type-group">
                       <legend class="visually-hidden">Event type</legend>
-                      ${['taxi', 'bus', 'train', 'ship', 'drive', 'flight', 'check-in', 'sightseeing', 'restaurant'].map((type) => `
+                      ${pointsTypes.map((type) => `
                         <div class="event__type-item">
                           <input id="event-type-${type}-${point.id}" class="event__type-input visually-hidden" type="radio" name="event-type" value="${type}" ${point.type === type ? 'checked' : ''}>
                           <label class="event__type-label event__type-label--${type}" for="event-type-${type}-${point.id}">${type.charAt(0).toUpperCase() + type.slice(1)}</label>
@@ -93,7 +94,6 @@ export default class FormEditView {
   getTemplate(point) {
     return createFormEditTemplate(point);
   }
-
 
   getElement() {
     if (!this.element) {

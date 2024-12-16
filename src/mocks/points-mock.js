@@ -1,4 +1,4 @@
-export const pointsMockArray = [
+export const pointsMock = [
   {
     'id': '31e070e0-548e-4170-8003-b9e6146cdb9a',
     'basePrice': 2453,

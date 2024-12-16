@@ -7,14 +7,14 @@ import { render } from '../render';
 
 export default class BoardPresenter {
 
-  constructor(container, model) {
+  constructor(container, model, filterContainer) {
     this.container = container;
     this.model = model;
-    this.filterContainer = document.querySelector('.trip-controls__filters');
+    this.filtersContainer = filterContainer;
 
     this.sortComponent = new SortView();
     this.pointsListComponent = new PointsListView();
-    this.filterComponent = new FiltersView();
+    this.filtersComponent = new FiltersView();
   }
 
   init() {
@@ -26,7 +26,7 @@ export default class BoardPresenter {
   }
 
   renderFilters() {
-    render(this.filterComponent, this.filterContainer);
+    render(this.filtersComponent, this.filtersContainer);
   }
 
   renderSort() {
@@ -34,7 +34,7 @@ export default class BoardPresenter {
   }
 
   renderPointsList() {
-    const points = this.model.getResolvedPointsArray();
+    const points = this.model.getResolvedPoints();
 
     if (!points || points.length === 0) {
       // TODO
@@ -50,7 +50,7 @@ export default class BoardPresenter {
   }
 
   renderFormEditView() {
-    const points = this.model.getResolvedPointsArray();
+    const points = this.model.getResolvedPoints();
     if (points.length > 0) {
       render(new FormEditView(points[0]), this.pointsListComponent.getElement());
     }

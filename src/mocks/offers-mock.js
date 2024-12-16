@@ -1,4 +1,4 @@
-export const offersMockArray = [
+export const offersMock = [
   {
     'type': 'taxi',
     'offers': [

@@ -1,5 +1,5 @@
 import {createElement} from '../render.js';
-import { formatDate, formatTime, formatDuration } from '../utils/dateUtils.js';
+import { formatDate, formatTime, formatDuration } from '../utils/date-utils.js';
 
 function createPointTemplate(point) {
   const { basePrice, dateFrom, dateTo, isFavorite, offers, type, destination } = point;

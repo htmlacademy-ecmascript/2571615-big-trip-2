@@ -1,84 +1,75 @@
-import {destinationsMockArray} from '../mocks/destinations-mock';
-import {offersMockArray} from '../mocks/offers-mock';
-import {pointsMockArray} from '../mocks/points-mock';
+import {destinationsMock} from '../mocks/destinations-mock';
+import {offersMock} from '../mocks/offers-mock';
+import {pointsMock} from '../mocks/points-mock';
 
 export default class Model {
-  rawPointsArray = pointsMockArray;
-  rawDestinationsArray = destinationsMockArray;
-  rawOffersArray = offersMockArray;
+  rawPoints = pointsMock;
+  rawDestinations = destinationsMock;
+  rawOffers = offersMock;
 
-  resolvedPointsArray = [];
+  resolvedPoints = [];
 
   constructor() {
-    if (!Array.isArray(this.rawDestinationsArray) || !Array.isArray(this.rawOffersArray)) {
-      throw new Error('Invalid input data: destinationsArray or offersArray is not an array');
-    }
-
-    this.destinationsMap = this.createDestinationsMap(this.rawDestinationsArray);
-    this.offersMap = this.createOffersMap(this.rawOffersArray);
+    this.createDestinationsMap();
+    this.createOffersMap();
+    this.createResolvedPoints();
   }
 
-  createDestinationsMap(destinations) {
-    return destinations.reduce((acc, destination) => {
-      if (destination && destination.id) {
-        acc[destination.id] = destination;
-      } else {
-        throw new Error('Invalid destination data');
-      }
+  createDestinationsMap() {
+    this.destinationsMap = this.rawDestinations.reduce((acc, destination) => {
+      acc[destination.id] = destination;
       return acc;
     }, {});
   }
 
-  createOffersMap(offersArray) {
-    return offersArray.reduce((acc, offer) => {
-      if (offer && offer.type && Array.isArray(offer.offers)) {
-        acc[offer.type] = offer.offers.reduce((offerAcc, item) => {
-          if (item && item.id) {
-            offerAcc[item.id] = item;
-          } else {
-            throw new Error('Invalid offer item');
-          }
-          return offerAcc;
-        }, {});
-      } else {
-        throw new Error('Invalid offer data');
-      }
+  createOffersMap() {
+    this.offersMap = this.rawOffers.reduce((acc, offer) => {
+      acc[offer.type] = offer.offers.reduce((offerAcc, item) => {
+        offerAcc[item.id] = item;
+        return offerAcc;
+      }, {});
       return acc;
     }, {});
   }
 
-  setResolvedPointsArray() {
-    if (!Array.isArray(this.rawPointsArray)) {
-      throw new Error('Invalid rawPointsArray data');
-    }
-
-    return this.rawPointsArray.map((point) => {
-      const destination = this.destinationsMap[point.destination];
-      const offers = point.offers.map((offerId) => {
+  createResolvedPoints() {
+    this.resolvedPoints = this.rawPoints.map((point) => {
+      const destination = {...this.destinationsMap[point.destination]};
+      const checkedOffers = point.offers.map((offerId) => {
         if (this.offersMap[point.type]) {
           return this.offersMap[point.type][offerId];
         }
         return null;
       }).filter(Boolean);
 
-      const allOffersArray = Object.values(this.offersMap[point.type]) || [];
+      const utilOffersMap = new Map();
+
+      const pointOffers = [];
+
+      Object.values(this.offersMap[point.type]).forEach((offer)=>{
+        utilOffersMap.set(offer, structuredClone(offer));
+      });
+
+      utilOffersMap.forEach((clonedOffer, offer) => {
+        clonedOffer['isChecked'] = checkedOffers.includes(offer);
+        pointOffers.push(clonedOffer);
+      });
 
       return {
         ...point,
         destination,
-        offers,
-        allOffersArray,
+        pointOffers,
       };
     });
   }
 
-  getResolvedPointsArray() {
-    return this.resolvedPointsArray;
+  getResolvedPoints() {
+    return this.resolvedPoints;
   }
 
   init() {
-    if (!this.resolvedPointsArray.length) {
-      this.resolvedPointsArray = this.setResolvedPointsArray();
+    if (this.resolvedPoints.length > 0) {
+      //ToDo;
     }
   }
 }
