@@ -1,5 +1,5 @@
-import {createElement} from '../render.js';
 import { pointsMock } from '../mocks/points-mock.js';
+import AbstractView from '../framework/view/abstract-view.js';
 
 const pointsTypes = pointsMock.map((point)=>point.type);
 
@@ -82,27 +82,33 @@ function createFormEditTemplate(point) {
           </li>`;
 }
 
-export default class FormEditView {
+export default class FormEditView extends AbstractView {
 
-  point = {};
-  element = null;
+  #point = {};
+  #handleFormSubmit = null;
 
-  constructor(point) {
-    this.point = point;
+
+  constructor({point, onFormSubmit}) {
+    super();
+    this.#point = point;
+    this.#handleFormSubmit = onFormSubmit;
+
+    this.element.querySelector('form')
+      .addEventListener('submit', this.#formSubmitHandler);
+
+    this.element.querySelector('.event__rollup-btn')
+      .addEventListener('click', this.#formSubmitHandler);
+
   }
 
-  getTemplate(point) {
-    return createFormEditTemplate(point);
+  get template() {
+    return createFormEditTemplate(this.#point);
   }
 
-  getElement() {
-    if (!this.element) {
-      this.element = createElement(this.getTemplate(this.point));
-    }
-    return this.element;
-  }
-
-  removeElement() {
-    this.element = null;
-  }
+  #formSubmitHandler = (evt) => {
+    evt.preventDefault();
+    this.#handleFormSubmit();
+  };
 }
+
+

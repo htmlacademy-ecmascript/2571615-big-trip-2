@@ -3,7 +3,8 @@ import PointsListView from '../view/points-list-view';
 import FormEditView from '../view/form-edit-view';
 import PointView from '../view/point-view';
 import FiltersView from '../view/filters-view';
-import { render } from '../render';
+import {render, replace} from '../framework/render.js';
+
 
 export default class BoardPresenter {
 
@@ -20,7 +21,6 @@ export default class BoardPresenter {
   init() {
     this.renderFilters();
     this.renderSort();
-    this.renderFormEditView();
     this.renderPointsList();
 
   }
@@ -42,18 +42,40 @@ export default class BoardPresenter {
     }
 
     render(this.pointsListComponent, this.container);
-    points.forEach((point) => this.renderPoint(point));
+    points.forEach((point) => this.#renderPoint(point));
   }
 
-  renderPoint(point) {
-    render(new PointView(point), this.pointsListComponent.getElement());
-  }
-
-  renderFormEditView() {
-    const points = this.model.getResolvedPoints();
-    if (points.length > 0) {
-      render(new FormEditView(points[0]), this.pointsListComponent.getElement());
+  #renderPoint(point) {
+    const escKeyDownHandler = (evt) => {
+      if (evt.key === 'Escape') {
+        evt.preventDefault();
+        replaceEditFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    };
+    const pointComponent = new PointView({
+      point,
+      onEditClick: () => {
+        replacePointToEditForm();
+        document.addEventListener('keydown', escKeyDownHandler);
+      }
+    });
+    const formEditComponent = new FormEditView({
+      point,
+      onFormSubmit: () => {
+        replaceEditFormToPoint();
+        document.removeEventListener('keydown', escKeyDownHandler);
+      }
+    });
+    function replacePointToEditForm() {
+      replace(formEditComponent, pointComponent);
     }
+
+    function replaceEditFormToPoint() {
+      replace(pointComponent, formEditComponent);
+    }
+
+    render(pointComponent, this.pointsListComponent.element);
   }
 
 }
