@@ -1,11 +1,15 @@
 import {destinationsMock} from '../mocks/destinations-mock';
 import {offersMock} from '../mocks/offers-mock';
 import {pointsMock} from '../mocks/points-mock';
+import {filtersMock} from '../mocks/filters-mock';
+import {sortMocks} from '../mocks/sort-mocks';
 
 export default class Model {
   rawPoints = pointsMock;
   rawDestinations = destinationsMock;
   rawOffers = offersMock;
+  filters = filtersMock;
+  sortOptions = sortMocks;
 
   resolvedPoints = [];
 
