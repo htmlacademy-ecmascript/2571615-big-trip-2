@@ -1,4 +1,4 @@
-export const sortMocks = {
+export const sortOptions = {
   sortByDay : 'Day',
   sortByEvent : 'Event',
   sortByTime : 'Time',
